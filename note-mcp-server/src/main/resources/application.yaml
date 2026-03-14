@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: note-mcp-server
+  ai:
+    mcp:
+      server:
+        name: note-mcp-server
+        version: 0.0.1
+        stdio: true
+
+  datasource:
+    url: jdbc:h2:mem:note_mcp_server_db
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+spring.main.banner-mode: off
+logging.level.root: warn
