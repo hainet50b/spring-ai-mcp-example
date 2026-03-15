@@ -1,0 +1,33 @@
+services:
+  spring-ai-mcp-example-ollama:
+    image: ollama/ollama
+    ports:
+      - 11434:11434
+    volumes:
+      - spring-ai-mcp-example-ollama-volume:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+              driver: nvidia
+              count: all
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+
+  spring-ai-mcp-example-ollama-model-setup:
+    image: ollama/ollama
+    depends_on:
+      spring-ai-mcp-example-ollama:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "ollama pull qwen3:8b"
+    environment:
+      OLLAMA_HOST: http://spring-ai-mcp-example-ollama:11434
+    restart: no
+
+volumes:
+  spring-ai-mcp-example-ollama-volume:
