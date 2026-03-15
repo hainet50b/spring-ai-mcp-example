@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: note-mcp-host
+
+  ai:
+    mcp:
+      client:
+        name: note-mcp-client
+        version: 0.0.1
+        stdio:
+          connections:
+            note-mcp-server:
+              command: java
+              args:
+                - -jar
+                - note-mcp-server/target/note-mcp-server-0.0.1-SNAPSHOT.jar
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: qwen3:8b
+
+logging:
+  level:
+    org.springframework.ai: debug
+    io.modelcontextprotocol: debug

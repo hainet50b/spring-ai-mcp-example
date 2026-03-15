@@ -1,0 +1,27 @@
+### Create a note
+# @timeout 600 s
+POST http://localhost:8080/chat
+Content-Type: text/plain
+
+Please create a note about Spring AI.
+
+### List all notes
+# @timeout 600 s
+POST http://localhost:8080/chat
+Content-Type: text/plain
+
+Please list all saved notes.
+
+### Update a note
+# @timeout 600 s
+POST http://localhost:8080/chat
+Content-Type: text/plain
+
+Please update note ID 1 with something about MCP.
+
+### Delete a note
+# @timeout 600 s
+POST http://localhost:8080/chat
+Content-Type: text/plain
+
+Please delete note ID 1.
