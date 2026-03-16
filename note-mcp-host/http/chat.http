@@ -5,6 +5,13 @@ Content-Type: text/plain
 
 Please create a note about Spring AI.
 
+### Create a note with using Wikipedia
+# @timeout 600 s
+POST http://localhost:8080/chat
+Content-Type: text/plain
+
+Please create a note about "Rod Johnson" who created the Spring Framework with using Wikipedia
+
 ### List all notes
 # @timeout 600 s
 POST http://localhost:8080/chat
