@@ -1,0 +1,15 @@
+spring:
+  ai:
+    mcp:
+      client:
+        streamable-http:
+          connections:
+            note-mcp-server:
+              url: http://spring-ai-mcp-example-note-mcp-server:8081
+            wikipedia-mcp-server:
+              url: http://spring-ai-mcp-example-wikipedia-mcp-server:8082
+    ollama:
+      base-url: http://spring-ai-mcp-example-ollama:11434
+      chat:
+        options:
+          model: qwen3:4b
