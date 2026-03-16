@@ -30,5 +30,26 @@ services:
       OLLAMA_HOST: http://spring-ai-mcp-example-ollama:11434
     restart: no
 
+  spring-ai-mcp-example-mysql:
+    image: mysql:9
+    ports:
+      - 3306:3306
+    volumes:
+      - spring-ai-mcp-example-mysql-volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: note_mcp_server_db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysql -h localhost -uroot -pchangeme note_mcp_server_db -e 'SELECT 1' > /dev/null || exit 1",
+        ]
+      interval: 1s
+      timeout: 2s
+      retries: 60
+    restart: unless-stopped
+
 volumes:
   spring-ai-mcp-example-ollama-volume:
+  spring-ai-mcp-example-mysql-volume:

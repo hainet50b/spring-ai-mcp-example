@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/note_mcp_server_db
+    username: root
+    password: changeme
+  jpa:
+    hibernate:
+      ddl-auto: update
