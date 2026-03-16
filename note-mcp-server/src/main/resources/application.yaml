@@ -6,7 +6,7 @@ spring:
       server:
         name: note-mcp-server
         version: 0.0.1
-        stdio: true
+        protocol: streamable
 
   datasource:
     url: jdbc:h2:mem:note_mcp_server_db
@@ -14,7 +14,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-    show-sql: false
+    show-sql: true
 
-spring.main.banner-mode: off
-logging.level.root: off
+server:
+  port: 8081

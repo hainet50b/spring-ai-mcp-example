@@ -6,7 +6,7 @@ spring:
       server:
         name: wikipedia-mcp-server
         version: 0.0.1
-        stdio: true
+        protocol: streamable
 
-spring.main.banner-mode: off
-logging.level.root: off
+server:
+  port: 8082
