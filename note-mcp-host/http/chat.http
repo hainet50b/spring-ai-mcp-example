@@ -10,7 +10,7 @@ Please create a note about Spring AI.
 POST http://localhost:8080/chat
 Content-Type: text/plain
 
-Please create a note about "Rod Johnson" who created the Spring Framework with using Wikipedia
+Please create a note about "Rod Johnson" who created the Spring Framework using Wikipedia
 
 ### List all notes
 # @timeout 600 s
