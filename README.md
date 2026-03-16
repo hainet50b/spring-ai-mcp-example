@@ -44,7 +44,7 @@ A sample project for learning MCP (Model Context Protocol) with Spring AI. The L
 
 ## Components
 
-### note-mcp-host (MCP Host with MCP Client)
+### note-mcp-host (MCP Host with MCP Clients)
 
 The host application sits between the user and the LLM. It receives chat messages from the user and sends them to Ollama via Spring AI's `ChatClient`. The LLM decides when to invoke MCP tools as needed.
 
@@ -150,13 +150,17 @@ docker compose down -v
 
 ## Local Development
 
-You can run each application individually without Docker.
+You can run each application individually.
 
 ### Prerequisites
 
 - Java 25
-- Ollama running on localhost:11434
-- qwen3:4b model downloaded
+
+Before running note-mcp-host, start Ollama and download the model using docker compose:
+
+```bash
+docker compose up -d spring-ai-mcp-example-ollama spring-ai-mcp-example-ollama-model-setup
+```
 
 ### Start
 
@@ -203,7 +207,7 @@ spring:
 
 ## Implementation Notes
 
-### note-mcp-host (MCP Host with MCP Client)
+### note-mcp-host (MCP Host with MCP Clients)
 
 #### Dependencies
 
