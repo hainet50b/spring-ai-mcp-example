@@ -12,6 +12,7 @@ services:
             - capabilities: ["gpu"]
               driver: nvidia
               count: all
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 2s
@@ -24,7 +25,7 @@ services:
       spring-ai-mcp-example-ollama:
         condition: service_healthy
     entrypoint: >
-      sh -c "ollama pull qwen3:8b"
+      sh -c "ollama pull qwen3:4b"
     environment:
       OLLAMA_HOST: http://spring-ai-mcp-example-ollama:11434
     restart: no
