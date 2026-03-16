@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: wikipedia-mcp-server
+  ai:
+    mcp:
+      server:
+        name: wikipedia-mcp-server
+        version: 0.0.1
+        stdio: true
+
+spring.main.banner-mode: off
+logging.level.root: off
