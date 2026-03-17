@@ -112,6 +112,8 @@ docker compose logs -f spring-ai-mcp-example-note-mcp-host
 
 Send chat messages to the `/chat` endpoint. The LLM will decide which MCP tools to call:
 
+> **Note:** The first request after Ollama starts takes longer (30 – 60s) because the model needs to be loaded into memory.
+
 ```bash
 # Create a note
 curl -X POST http://localhost:8080/chat \
@@ -182,7 +184,7 @@ cd note-mcp-host
 
 Spring profiles are used to switch between local development and Docker environments. The `application-docker.yaml` in each module overrides settings as needed:
 
-| Setting | Default (local) | docker profile |
+| Setting | default profile | docker profile |
 |---|---|---|
 | MCP server URLs | localhost:8081 / 8082 | Docker service names |
 | Ollama URL | localhost:11434 | Docker service name |
