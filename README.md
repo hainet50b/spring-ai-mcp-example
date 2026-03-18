@@ -4,32 +4,37 @@ A sample project for learning MCP (Model Context Protocol) with Spring AI. The L
 
 ## Architecture
 
-```
-                              POST /chat
-                   ┌──────────────────────────────────┐
-  ┌────────┐       │  note-mcp-host                   │       ┌──────────────────┐
-  │        │ HTTP  │  (MCP Host) :8080                │ HTTP  │     Ollama       │
-  │  User  ├──────►│  ┌────────────┐  ┌────────────┐  ├──────►│    (qwen3:4b)    │
-  │        │       │  │ MCP Client │  │ MCP Client │  │       │     :11434       │
-  └────────┘       │  └──────┬─────┘  └─────┬──────┘  │       └──────────────────┘
-                   └─────────┼──────────────┼─────────┘
-                             │              │
-               Streamable HTTP              Streamable HTTP
-                             │              │
-                   ┌─────────┘              └─────────┐
-                   ▼                                  ▼
-          ┌──────────────────┐           ┌──────────────────┐
-          │  note-mcp-       │           │ wikipedia-mcp-   │
-          │  server          │           │ server           │
-          │ (MCP Server)     │           │ (MCP Server)     │
-          │    :8081         │           │    :8082         │
-          └────────┬─────────┘           └────────┬─────────┘
-                   │                              │
-                   ▼                              ▼
-          ┌──────────────────┐           ┌──────────────────┐
-          │      MySQL       │           │ Wikipedia REST   │
-          │      :3306       │           │ API              │
-          └──────────────────┘           └──────────────────┘
+```mermaid
+graph TB
+    subgraph Local Machine
+        User
+        Port((":8080"))
+
+        subgraph Docker Compose
+            subgraph NoteMcpHost["note-mcp-host :8080 (MCP Host)"]
+                NoteMcpClient["Note MCP Client"]
+                WikipediaMcpClient["Wikipedia MCP Client"]
+            end
+            Ollama["Ollama :11434"]
+            NoteMcpServer["note-mcp-server :8081<br>(MCP Server)"]
+            MySQL["MySQL :3306"]
+            WikipediaMcpServer["wikipedia-mcp-server :8082<br>(MCP Server)"]
+        end
+    end
+
+    subgraph External
+        WikipediaRESTAPI["Wikipedia REST API"]
+    end
+
+    User -->|POST /chat| Port
+    Port -->|Published Port| NoteMcpHost
+
+    NoteMcpHost -->|HTTP| Ollama
+    NoteMcpClient -->|Streamable HTTP| NoteMcpServer
+    WikipediaMcpClient -->|Streamable HTTP| WikipediaMcpServer
+    NoteMcpServer --> MySQL
+
+    WikipediaMcpServer -->|HTTP| WikipediaRESTAPI
 ```
 
 ## Tech Stack
