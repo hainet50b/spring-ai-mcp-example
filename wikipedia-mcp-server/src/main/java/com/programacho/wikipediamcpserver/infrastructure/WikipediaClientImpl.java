@@ -4,7 +4,6 @@ import com.programacho.wikipediamcpserver.domain.Page;
 import com.programacho.wikipediamcpserver.domain.SearchResult;
 import com.programacho.wikipediamcpserver.domain.SearchResults;
 import com.programacho.wikipediamcpserver.domain.WikipediaClient;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
