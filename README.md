@@ -17,7 +17,7 @@ graph TB
             end
             Ollama["🦙 Ollama :11434"]
             NoteMcpServer["🌿 note-mcp-server :8081<br>(MCP Server)"]
-            MySQL["🐬 MySQL :3306"]
+            MySQL[("🐬 MySQL :3306")]
             WikipediaMcpServer["🌿 wikipedia-mcp-server :8082<br>(MCP Server)"]
         end
     end
