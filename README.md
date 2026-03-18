@@ -104,12 +104,6 @@ docker compose logs -f spring-ai-mcp-example-ollama-model-setup
 
 ### Usage
 
-To monitor the application logs (tool calls, LLM interactions):
-
-```bash
-docker compose logs -f spring-ai-mcp-example-note-mcp-host
-```
-
 Send chat messages to the `/chat` endpoint. The LLM will decide which MCP tools to call:
 
 > **Note:** The first request after Ollama starts takes longer (30 – 60s) because the model needs to be loaded into memory.
@@ -139,6 +133,12 @@ curl -X POST http://localhost:8080/chat \
 curl -X POST http://localhost:8080/chat \
   -H 'Content-Type: text/plain' \
   -d 'Please delete note ID 1.'
+```
+
+To monitor the application logs (tool calls, LLM interactions):
+
+```bash
+docker compose logs -f spring-ai-mcp-example-note-mcp-host
 ```
 
 ### Stop
@@ -210,6 +210,10 @@ spring:
 ## Implementation Notes
 
 ### note-mcp-host (MCP Host with MCP Clients)
+
+> **References:**
+> - [MCP Client Boot Starter](https://docs.spring.io/spring-ai/reference/2.0/api/mcp/mcp-client-boot-starter-docs.html)
+> - [Ollama Chat Model](https://docs.spring.io/spring-ai/reference/2.0/api/chat/ollama-chat.html)
 
 #### Dependencies
 
@@ -286,6 +290,9 @@ public class ChatController {
 
 ### note-mcp-server
 
+> **References:**
+> - [MCP Server Boot Starter](https://docs.spring.io/spring-ai/reference/2.0/api/mcp/mcp-server-boot-starter-docs.html)
+
 #### Dependencies
 
 `spring-ai-starter-mcp-server-webmvc` provides MCP server support over HTTP (Streamable HTTP / SSE):
@@ -340,6 +347,10 @@ public Note createNote(
 ```
 
 ### wikipedia-mcp-server
+
+> **References:**
+> - [MCP Server Boot Starter](https://docs.spring.io/spring-ai/reference/2.0/api/mcp/mcp-server-boot-starter-docs.html)
+> - [MediaWiki REST API](https://en.wikipedia.org/w/index.php?api=mw-extra&title=Special%3ARestSandbox)
 
 #### Wikipedia REST API
 
