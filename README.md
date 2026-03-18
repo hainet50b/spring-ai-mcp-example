@@ -6,24 +6,24 @@ A sample project for learning MCP (Model Context Protocol) with Spring AI. The L
 
 ```mermaid
 graph TB
-    subgraph Local Machine
-        User
+    subgraph "💻️ Local Machine"
+        User["👤 User"]
         Port((":8080"))
 
-        subgraph Docker Compose
-            subgraph NoteMcpHost["note-mcp-host :8080 (MCP Host)"]
-                NoteMcpClient["Note MCP Client"]
-                WikipediaMcpClient["Wikipedia MCP Client"]
+        subgraph "🐳 Docker Compose"
+            subgraph NoteMcpHost["🌿 note-mcp-host :8080 (MCP Host)"]
+                NoteMcpClient["🌿 Note MCP Client"]
+                WikipediaMcpClient["🌿 Wikipedia MCP Client"]
             end
-            Ollama["Ollama :11434"]
-            NoteMcpServer["note-mcp-server :8081<br>(MCP Server)"]
-            MySQL["MySQL :3306"]
-            WikipediaMcpServer["wikipedia-mcp-server :8082<br>(MCP Server)"]
+            Ollama["🦙 Ollama :11434"]
+            NoteMcpServer["🌿 note-mcp-server :8081<br>(MCP Server)"]
+            MySQL["🐬 MySQL :3306"]
+            WikipediaMcpServer["🌿 wikipedia-mcp-server :8082<br>(MCP Server)"]
         end
     end
 
     subgraph External
-        WikipediaRESTAPI["Wikipedia REST API"]
+        WikipediaRESTAPI["📃 Wikipedia REST API"]
     end
 
     User -->|POST /chat| Port
