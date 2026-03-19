@@ -12,10 +12,10 @@ import java.util.NoSuchElementException;
 @Component
 public class NoteTools {
 
-    private final NoteService service;
+    private final NoteRepository repository;
 
-    public NoteTools(NoteService service) {
-        this.service = service;
+    public NoteTools(NoteRepository repository) {
+        this.repository = repository;
     }
 
     @Tool(name = "create-note", description = "Create a new note.")
@@ -29,19 +29,20 @@ public class NoteTools {
         note.setContent(content);
         note.setTags(tags);
 
-        return service.createNote(note);
+        return repository.save(note);
     }
 
     @Tool(name = "list-notes", description = "List all notes.")
     public List<Note> listNotes() {
-        return service.listNotes();
+        return repository.findAll();
     }
 
     @Tool(name = "get-note", description = "Fetch a note by ID.")
     public Note getNote(
             @ToolParam(description = "ID of the note to fetch") Long id
     ) {
-        return service.getNote(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Note not found: id=" + id));
     }
 
     @Tool(name = "update-note", description = "Update a note by ID.")
@@ -51,23 +52,26 @@ public class NoteTools {
             @ToolParam(description = "Content of the note") String content,
             @ToolParam(description = "Tags of the note, separated by commas. (e.g. java,spring,mcp)") String tags
     ) {
-        Note note = service.getNote(id);
-        note.setTitle(title);
-        note.setContent(content);
-        note.setTags(tags);
+        return repository.findById(id)
+                .map(m -> {
+                    m.setTitle(title);
+                    m.setContent(content);
+                    m.setTags(tags);
 
-        return service.updateNote(note);
+                    return repository.save(m);
+                })
+                .orElseThrow(() -> new NoSuchElementException("Note not found: id=" + id));
     }
 
     @Tool(name = "delete-note", description = "Delete a note by ID.")
     public String deleteNote(
             @ToolParam(description = "ID of the note to delete") Long id
     ) {
-        if (!service.noteExists(id)) {
+        if (!repository.existsById(id)) {
             throw new NoSuchElementException("Note not found: id=" + id);
         }
 
-        service.deleteNote(id);
+        repository.deleteById(id);
 
         return "Note deleted: id=" + id;
     }

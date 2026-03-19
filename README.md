@@ -120,6 +120,28 @@ docker compose logs -f spring-ai-mcp-example-ollama-model-setup
 
 Send chat messages to the `/chat` endpoint. The LLM will decide which MCP tools to call:
 
+> **Note:** The following diagram shows a typical flow for creating a note. The actual sequence may vary depending on the LLM's decisions.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Host as note-mcp-host
+    participant Ollama
+    participant Server as note-mcp-server
+    participant MySQL
+
+    User->>Host: POST /chat "Please create a note about Spring AI."
+    Host->>Ollama: Chat request with available tools
+    Ollama->>Host: Tool call: create-note(title, content, tags)
+    Host->>Server: Streamable HTTP: create-note
+    Server->>MySQL: INSERT
+    MySQL-->>Server: Note
+    Server-->>Host: Tool result
+    Host->>Ollama: Tool result
+    Ollama-->>Host: Response text
+    Host-->>User: "I've created a note about Spring AI."
+```
+
 ```bash
 # Create a note
 curl -X POST http://localhost:8080/chat \
@@ -150,6 +172,28 @@ curl -X POST http://localhost:8080/chat \
 #### Summarize (MCP Prompts)
 
 The `/notes/{id}/summary` endpoint retrieves a summarization prompt from the MCP server and passes it to the LLM:
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Host as note-mcp-host
+    participant Server as note-mcp-server
+    participant Ollama
+    participant MySQL
+
+    User->>Host: GET /notes/1/summary
+    Host->>Server: Streamable HTTP: summarize-note(id=1)
+    Server-->>Host: Prompt: "Please summarize note ID 1."
+    Host->>Ollama: Chat request with prompt and available tools
+    Ollama->>Host: Tool call: get-note(1)
+    Host->>Server: Streamable HTTP: get-note
+    Server->>MySQL: SELECT
+    MySQL-->>Server: Note
+    Server-->>Host: Tool result
+    Host->>Ollama: Tool result
+    Ollama-->>Host: Summary text
+    Host-->>User: Summary of the note
+```
 
 ```bash
 curl http://localhost:8080/notes/1/summary
