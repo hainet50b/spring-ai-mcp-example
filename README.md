@@ -54,18 +54,23 @@ graph TB
 The host application sits between the user and the LLM. It receives chat messages from the user and sends them to Ollama via Spring AI's `ChatClient`. The LLM decides when to invoke MCP tools as needed.
 
 - `POST /chat` — Accepts a natural language message and returns the AI response
+- `GET /notes/{id}/summary` — Retrieves a summarization prompt from the MCP server and returns the LLM's summary
 
 ### note-mcp-server (MCP Server)
 
-Exposes note CRUD operations as MCP tools.
+Exposes note CRUD operations as MCP tools and prompt templates as MCP prompts.
 
 | Tool | Description |
 |---|---|
-| `createNote` | Create a new note (title, content, tags) |
-| `listNotes` | List all notes |
-| `getNote` | Fetch a note by ID |
-| `updateNote` | Update a note by ID |
-| `deleteNote` | Delete a note by ID |
+| `create-note` | Create a new note (title, content, tags) |
+| `list-notes` | List all notes |
+| `get-note` | Fetch a note by ID |
+| `update-note` | Update a note by ID |
+| `delete-note` | Delete a note by ID |
+
+| Prompt | Description |
+|---|---|
+| `summarize-note` | Summarize a note by its ID |
 
 ### wikipedia-mcp-server (MCP Server)
 
@@ -73,8 +78,8 @@ Exposes Wikipedia search and page retrieval as MCP tools.
 
 | Tool | Description |
 |---|---|
-| `searchPages` | Search Wikipedia pages (query, limit) |
-| `getPageSource` | Get the content of a Wikipedia page (title) |
+| `search-pages` | Search Wikipedia pages (query, limit) |
+| `get-page-source` | Get the content of a Wikipedia page (title) |
 
 ## Quick Start
 
@@ -84,7 +89,7 @@ Exposes Wikipedia search and page retrieval as MCP tools.
 - NVIDIA GPU + nvidia-container-toolkit (recommended for Ollama GPU inference)
 
 > **Note:** This project works without a GPU, but inference will be significantly slower.
-> Reference times for a single `createNote` call with qwen3:4b (measured in our tests):
+> Reference times for a single `create-note` call with qwen3:4b (measured in our tests):
 >
 > | Machine | CPU | GPU | Time |
 > |---|---|---|---|
@@ -109,9 +114,11 @@ docker compose logs -f spring-ai-mcp-example-ollama-model-setup
 
 ### Usage
 
-Send chat messages to the `/chat` endpoint. The LLM will decide which MCP tools to call:
-
 > **Note:** The first request after Ollama starts takes longer (30 – 60s) because the model needs to be loaded into memory.
+
+#### Chat (MCP Tools)
+
+Send chat messages to the `/chat` endpoint. The LLM will decide which MCP tools to call:
 
 ```bash
 # Create a note
@@ -139,6 +146,16 @@ curl -X POST http://localhost:8080/chat \
   -H 'Content-Type: text/plain' \
   -d 'Please delete note ID 1.'
 ```
+
+#### Summarize (MCP Prompts)
+
+The `/notes/{id}/summary` endpoint retrieves a summarization prompt from the MCP server and passes it to the LLM:
+
+```bash
+curl http://localhost:8080/notes/1/summary
+```
+
+#### Tips
 
 To monitor the application logs (tool calls, LLM interactions):
 
@@ -329,9 +346,9 @@ spring:
 
 ```java
 @Bean
-public ToolCallbackProvider noteServiceProvider(NoteService service) {
+public ToolCallbackProvider noteServiceProvider(NoteTools tools) {
     return MethodToolCallbackProvider.builder()
-            .toolObjects(service)
+            .toolObjects(tools)
             .build();
 }
 ```
@@ -341,7 +358,7 @@ public ToolCallbackProvider noteServiceProvider(NoteService service) {
 Each tool method is annotated with `@Tool` for its description, and each parameter with `@ToolParam`. These descriptions are sent to the LLM so it can understand when and how to use each tool:
 
 ```java
-@Tool(description = "Create a new note.")
+@Tool(name = "create-note", description = "Create a new note.")
 public Note createNote(
         @ToolParam(description = "Title of the note") String title,
         @ToolParam(description = "Content of the note") String content,
@@ -397,9 +414,9 @@ spring:
 
 ```java
 @Bean
-public ToolCallbackProvider wikipediaServiceProvider(WikipediaService service) {
+public ToolCallbackProvider wikipediaServiceProvider(WikipediaTools tools) {
     return MethodToolCallbackProvider.builder()
-            .toolObjects(service)
+            .toolObjects(tools)
             .build();
 }
 ```
@@ -409,7 +426,7 @@ public ToolCallbackProvider wikipediaServiceProvider(WikipediaService service) {
 Each tool method is annotated with `@Tool` for its description, and each parameter with `@ToolParam`. These descriptions are sent to the LLM so it can understand when and how to use each tool:
 
 ```java
-@Tool(description = "Search Wikipedia pages for the provided search terms.")
+@Tool(name = "search-pages", description = "Search Wikipedia pages for the provided search terms.")
 public List<SearchResult> searchPages(
         @ToolParam(description = "Search terms") String query,
         @ToolParam(description = "Number of pages to return") Integer limit
@@ -417,7 +434,7 @@ public List<SearchResult> searchPages(
     // ...
 }
 
-@Tool(description = "Get the content of a Wikipedia page.")
+@Tool(name = "get-page-source", description = "Get the content of a Wikipedia page.")
 public Page getPageSource(
         @ToolParam(description = "Title of the article") String title
 ) {

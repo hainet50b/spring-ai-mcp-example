@@ -10,15 +10,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class WikipediaService {
+public class WikipediaTools {
 
     private final WikipediaClient wikipediaClient;
 
-    public WikipediaService(WikipediaClient wikipediaClient) {
+    public WikipediaTools(WikipediaClient wikipediaClient) {
         this.wikipediaClient = wikipediaClient;
     }
 
-    @Tool(description = "Search Wikipedia pages for the provided search terms.")
+    @Tool(name = "search-pages", description = "Search Wikipedia pages for the provided search terms.")
     public List<SearchResult> searchPages(
             @ToolParam(description = "Search terms") String query,
             @ToolParam(description = "Number of pages to return") Integer limit
@@ -26,7 +26,7 @@ public class WikipediaService {
         return wikipediaClient.searchPages(query, limit);
     }
 
-    @Tool(description = "Get the content of a Wikipedia page.")
+    @Tool(name = "get-page-source", description = "Get the content of a Wikipedia page.")
     public Page getPageSource(
             @ToolParam(description = "Title of the article") String title
     ) {

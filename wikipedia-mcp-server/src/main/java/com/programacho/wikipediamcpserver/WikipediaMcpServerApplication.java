@@ -1,6 +1,6 @@
 package com.programacho.wikipediamcpserver;
 
-import com.programacho.wikipediamcpserver.application.WikipediaService;
+import com.programacho.wikipediamcpserver.application.WikipediaTools;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.boot.SpringApplication;
@@ -15,9 +15,9 @@ public class WikipediaMcpServerApplication {
     }
 
     @Bean
-    public ToolCallbackProvider wikipediaServiceProvider(WikipediaService service) {
+    public ToolCallbackProvider wikipediaServiceProvider(WikipediaTools tools) {
         return MethodToolCallbackProvider.builder()
-                .toolObjects(service)
+                .toolObjects(tools)
                 .build();
     }
 }

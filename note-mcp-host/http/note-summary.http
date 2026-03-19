@@ -1,0 +1,3 @@
+### Create a note summary
+# @timeout 600 s
+GET http://localhost:8080/notes/1/summary
