@@ -120,26 +120,64 @@ docker compose logs -f spring-ai-mcp-example-ollama-model-setup
 
 Send chat messages to the `/chat` endpoint. The LLM will decide which MCP tools to call:
 
-> **Note:** The following diagram shows a typical flow for creating a note. The actual sequence may vary depending on the LLM's decisions.
+> **Note:** The following diagrams show typical flows. The actual sequence may vary depending on the LLM's decisions.
+
+**Create a note:**
 
 ```mermaid
 sequenceDiagram
     actor User
-    participant Host as note-mcp-host
-    participant Ollama
-    participant Server as note-mcp-server
-    participant MySQL
+    participant Host as 🌿 note-mcp-host
+    participant Ollama as 🦙 Ollama
+    participant NoteServer as 🌿 note-mcp-server
+    participant MySQL as 🐬 MySQL
 
     User->>Host: POST /chat "Please create a note about Spring AI."
     Host->>Ollama: Chat request with available tools
     Ollama->>Host: Tool call: create-note(title, content, tags)
-    Host->>Server: Streamable HTTP: create-note
-    Server->>MySQL: INSERT
-    MySQL-->>Server: Note
-    Server-->>Host: Tool result
+    Host->>NoteServer: Streamable HTTP: create-note
+    NoteServer->>MySQL: INSERT
+    MySQL-->>NoteServer: Note
+    NoteServer-->>Host: Tool result
     Host->>Ollama: Tool result
     Ollama-->>Host: Response text
     Host-->>User: "I've created a note about Spring AI."
+```
+
+**Create a note using Wikipedia:**
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Host as 🌿 note-mcp-host
+    participant Ollama as 🦙 Ollama
+    participant WikiServer as 🌿 wikipedia-mcp-server
+    participant WikiAPI as 📃 Wikipedia REST API
+    participant NoteServer as 🌿 note-mcp-server
+    participant MySQL as 🐬 MySQL
+
+    User->>Host: POST /chat "Please create a note about 'Rod Johnson' using Wikipedia"
+    Host->>Ollama: Chat request with available tools
+    Ollama->>Host: Tool call: search-pages("Rod Johnson")
+    Host->>WikiServer: Streamable HTTP: search-pages
+    WikiServer->>WikiAPI: GET /search/page
+    WikiAPI-->>WikiServer: Search results
+    WikiServer-->>Host: Tool result
+    Host->>Ollama: Tool result
+    Ollama->>Host: Tool call: get-page-source("Rod Johnson (computer scientist)")
+    Host->>WikiServer: Streamable HTTP: get-page-source
+    WikiServer->>WikiAPI: GET /page/{title}
+    WikiAPI-->>WikiServer: Page content
+    WikiServer-->>Host: Tool result
+    Host->>Ollama: Tool result
+    Ollama->>Host: Tool call: create-note(title, content, tags)
+    Host->>NoteServer: Streamable HTTP: create-note
+    NoteServer->>MySQL: INSERT
+    MySQL-->>NoteServer: Note
+    NoteServer-->>Host: Tool result
+    Host->>Ollama: Tool result
+    Ollama-->>Host: Response text
+    Host-->>User: "I've created a note about Rod Johnson."
 ```
 
 ```bash
@@ -176,10 +214,10 @@ The `/notes/{id}/summary` endpoint retrieves a summarization prompt from the MCP
 ```mermaid
 sequenceDiagram
     actor User
-    participant Host as note-mcp-host
-    participant Server as note-mcp-server
-    participant Ollama
-    participant MySQL
+    participant Host as 🌿 note-mcp-host
+    participant Server as 🌿 note-mcp-server
+    participant Ollama as 🦙 Ollama
+    participant MySQL as 🐬 MySQL
 
     User->>Host: GET /notes/1/summary
     Host->>Server: Streamable HTTP: summarize-note(id=1)
