@@ -83,8 +83,8 @@ Exposes Wikipedia search and page retrieval as MCP tools.
 - Docker / Docker Compose
 - NVIDIA GPU + nvidia-container-toolkit (recommended for Ollama GPU inference)
 
-> **Note:** This project works without a GPU, but inference will be significantly slower.  
-> Reference times for a single `createNote` call with qwen3:4b (measured by the author):
+> **Note:** This project works without a GPU, but inference will be significantly slower.
+> Reference times for a single `createNote` call with qwen3:4b (measured in our tests):
 >
 > | Machine | CPU | GPU | Time |
 > |---|---|---|---|
